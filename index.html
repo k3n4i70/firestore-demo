@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainrot Collection No Timestamp</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 50px; background-color: #000; color: #fff; }
+        .container { background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333; width: 320px; text-align: center; box-shadow: 0 0 20px rgba(255, 255, 255, 0.05); }
+        input { padding: 12px; width: 85%; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; background: #222; color: white; outline: none; }
+        button { padding: 12px 25px; cursor: pointer; background: #fff; border: none; border-radius: 8px; font-weight: bold; color: #000; transition: 0.3s; }
+        button:hover { background: #ccc; transform: translateY(-2px); }
+        ul { list-style: none; padding: 0; margin-top: 25px; width: 100%; text-align: left; }
+        li { background: #1a1a1a; margin: 8px 0; padding: 12px; border-radius: 8px; border: 1px solid #222; font-size: 1.1em; color: #00ffcc; }
+        h2 { margin-bottom: 20px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Brainrot List 💀</h2>
+        <input type="text" id="userName" placeholder="Име, малко братленце...">
+        <button id="saveBtn">ADD SIGMA</button>
+
+        <ul id="namesList"></ul>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Твоят оригинален Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEVsJtxUzzjNYgYRxHSOyNo_FgMs-aItc",
+            authDomain: "mazna-55311.firebaseapp.com",
+            projectId: "mazna-55311",
+            storageBucket: "mazna-55311.firebasestorage.app",
+            messagingSenderId: "1065403677366",
+            appId: "1:1065403677366:web:16fb72a5a402dd62cd8417"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const saveBtn = document.getElementById('saveBtn');
+        const nameInput = document.getElementById('userName');
+        const namesList = document.getElementById('namesList');
+
+        // Функция за взимане на всички имена от колекция "brainrot"
+        async function fetchNames() {
+            namesList.innerHTML = ""; 
+            try {
+                const querySnapshot = await getDocs(collection(db, "brainrot"));
+                
+                querySnapshot.forEach((doc) => {
+                    const li = document.createElement('li');
+                    li.textContent = doc.data().name;
+                    namesList.appendChild(li);
+                });
+            } catch (e) {
+                console.error("Грешка при теглене: ", e);
+            }
+        }
+
+        // Записване само на име
+        saveBtn.addEventListener('click', async () => {
+            const nameValue = nameInput.value;
+
+            if (nameValue.trim() === "") {
+                alert("Womp-womp! Напиши нещо де.");
+                return;
+            }
+
+            try {
+                // Пращаме само името към колекция brainrot
+                await addDoc(collection(db, "brainrot"), {
+                    name: nameValue
+                });
+
+                nameInput.value = ""; 
+                await fetchNames(); // Рефрешваме списъка
+            } catch (e) {
+                console.error("Грешка: ", e);
+                alert("L + Ratio + Не стана записът.");
+            }
+        });
+
+        // Зареждаме началния списък
+        fetchNames();
+    </script>
+</body>
+</html>
